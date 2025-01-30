@@ -41,21 +41,23 @@
         #Register-form > input::placeholder{
             color: #D2D2D2;
         }
-        #Register-form > input[type="submit"]{
-            color: #fff;
-            font-size: 16px;
-            background-color: #6A24FE;
-            margin-top: 3px;
+        #Register-form > button{
+          width: 100%;
+          height: 48px;
+          padding: 0 10px;
+          box-sizing: border-box;
+          margin-bottom: 16px;
+          border-radius: 6px;
+          color: #fff;
+          font-size: 16px;
+          background-color: #6A24FE;
+          margin-top: 3px;
         }
 
         #mains{
             margin:150px auto;
         }
 
-        .btn :hover {
-
-            transform: scale(0.75) translate(-16%, 0);
-        }
 
     </style>
 </head>
@@ -63,11 +65,11 @@
 <div id="mains" class="Register-wrapper">
     <h2>Regist</h2>
     <form id="Register-form" action="RegisterRequest" method="post">
-        <input type="text" name="userId" placeholder="아이디">
-        <input type="text" name="userName" placeholder="별명">
-        <input type="text" name="userEmail" placeholder="이메일">
-        <input type="password" name="userPassword" placeholder="패스워드">
-        <input type="submit" value="회원가입">
+        <input type="text" placeholder="아이디" name="UserId">
+        <input type="text" placeholder="별명" name="UserName">
+        <input type="text" placeholder="이메일" name="UserEmail">
+        <input type="password" placeholder="패스워드" name="UserPassword">
+        <button type="submit" id="subm">회원가입</button>
     </form>
 </div>
 </body>

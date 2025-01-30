@@ -38,24 +38,26 @@
     #login-form > input::placeholder{
       color: #D2D2D2;
     }
-    #login-form > input[type="submit"]{
+    #login-form > button{
+      width: 100%;
+      height: 48px;
+      padding: 0 10px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+      border-radius: 6px;
       color: #fff;
       font-size: 16px;
       background-color: #6A24FE;
       margin-top: 3px;
     }
 
-    #login-form > button{
-      background-color: #FFFFFF;
-    }
-
     #mains{
       margin:150px auto;
     }
 
-    .btn :hover {
+    button:hover{
+      cursor:pointer;
 
-      transform: scale(0.75) translate(-16%, 0);
     }
   </style>
 </head>
@@ -65,7 +67,7 @@
   <form id="login-form">
     <input type="text" name="userName" placeholder="아이디">
     <input type="password" name="userPassword" placeholder="패스워드">
-    <input type="submit" value="로그인">
+    <button type="submit" value="로그인">로그인</button>
     <a href="RegisterPage">회원가입</a>
   </form>
 </div>
