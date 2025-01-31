@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.data.dto.LoginPageDTO;
 import com.example.demo.data.dto.RegisterPageDTO;
 import com.example.demo.service.userControlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class StartController {
     }
 
 
+
     /**
      * [2025-01-14] 로그인페이지에서 회원가입페이지로 리다이랙션 해주는 곳
      * 해당 기능은 추가할 내용이 없어보임.
@@ -38,6 +40,18 @@ public class StartController {
     public String goToRegistPage() {
         System.out.println("회원가입 페이지로 ( RegistPage -> Registpage ) ");
         return "RegisterPage";
+    }
+
+
+    /**
+     * [2025-01-31] 로그인페이지에서 입력받은 내용과 일치하는 정보가 DB에 존재할경우 로그인 진행
+     */
+    @PostMapping("LoginTry")
+    public String runLoginRequest(LoginPageDTO form){
+        if(userService.userTryToLogin(form)) {
+            return "MainPage";
+        }else
+            return "LoginPage";
     }
 
 
