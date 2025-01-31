@@ -1,0 +1,40 @@
+package com.example.demo.service;
+
+import com.example.demo.data.dao.UserDataAccessObject;
+import com.example.demo.data.dto.LoginPageDTO;
+import com.example.demo.data.dto.RegisterPageDTO;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class userControlService {
+    UserDataAccessObject userDAO;
+
+    @Autowired
+    public userControlService(UserDataAccessObject userDAO) {
+        this.userDAO = userDAO;
+    }
+
+
+    /**
+     * [2025-01-25] 회원가입 진행 (폼데이터로 userDTO에 담고, 해당 값을 서비스로
+     *
+     */
+    public boolean userRegistService(RegisterPageDTO userDTO){
+        System.out.println("[Service] form 데이터 userDTO 전달받음.");
+        System.out.println("[Service] userDTO 값으로 DAO에 전달 (service -> dao");
+        return userDAO.userInfoSave(userDTO);
+    }
+
+    /**
+     * [2025-01-31] 로그인 정보값을 가지고 DB와 비교 후 로그인 진행
+     *
+     */
+    public boolean userTryToLogin(LoginPageDTO userLoginDTO) {
+        return userDAO.CompareDataToLogin(userLoginDTO);
+    }
+}
