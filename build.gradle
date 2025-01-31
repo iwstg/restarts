@@ -29,6 +29,9 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // spring secure 비밀번호 암호화 사용하려고 추가
+//    implementation "org.springframework.boot:spring-boot-starter-security"
 }
 
 tasks.named('test') {

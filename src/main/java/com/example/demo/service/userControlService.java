@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.data.dao.UserDataAccessObject;
 import com.example.demo.data.dto.LoginPageDTO;
 import com.example.demo.data.dto.RegisterPageDTO;
+import com.example.demo.data.dto.UserInfoDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,16 @@ public class userControlService {
      */
     public boolean userTryToLogin(LoginPageDTO userLoginDTO) {
         return userDAO.CompareDataToLogin(userLoginDTO);
+    }
+
+    /**
+     * [2025-01-31] 사용자 정보 요청시 DTO 객체로 반환
+     */
+    public UserInfoDTO ReturnUserInfoUseID(String userID){
+        if(userDAO.checkUserId(userID)){
+            return userDAO.ReturnUserInfo(userID);
+        }else{
+            return null;
+        }
     }
 }
