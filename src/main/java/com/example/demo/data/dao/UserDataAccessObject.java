@@ -4,6 +4,7 @@ import com.example.demo.Configuration.Sha256Encode;
 import com.example.demo.data.dto.LoginPageDTO;
 import com.example.demo.data.dto.RegisterPageDTO;
 import com.example.demo.data.dto.UserInfoDTO;
+import com.example.demo.data.dto.UserProfilDTO;
 import com.example.demo.data.entity.userEntity;
 import com.example.demo.data.repository.userRepository;
 import jakarta.transaction.Transactional;
@@ -11,32 +12,36 @@ import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+
 @Service
 @Transactional
 public class UserDataAccessObject {
     userRepository userRepo;
 
     @Autowired
-    public UserDataAccessObject(userRepository userRepo){
+    public UserDataAccessObject(userRepository userRepo) {
         this.userRepo = userRepo;
     }
 
     // 해당 ID 전달받아 DB에 존재하는지 확인
-    public boolean checkUserId(String userId){
+    public boolean checkUserId(String userId) {
         return userRepo.existsById(userId);
     }
 
 
     // 회원가입 객체를 전달받아 그 객체 내용으로 DB에 계정 저장
-    public boolean userInfoSave(RegisterPageDTO userDTO){
+    public boolean userInfoSave(RegisterPageDTO userDTO) {
         System.out.println("[userDAO] dao에서 DTO 값 전달 받음. 가입 로직 시작");
         userDTO.setUserPassword(Sha256Encode.encrypt(userDTO.getUserPassword()));
         // 중복체크 있으면 false 없으면 엔티티에 넣어 저장 진행
-        if(checkUserId(userDTO.getUserId())) {
+        if (checkUserId(userDTO.getUserId())) {
             System.out.println("[userDAO] 전달받은 DTO에 ID값과 일치하는 것 존재 가입 실패");
             return false;
-        }else{
-            userEntity ent = new userEntity(userDTO.getUserId(), userDTO.getUserName(), userDTO.getUserEmail(), userDTO.getUserPassword());
+        } else {
+            userEntity ent = new userEntity(userDTO.getUserId(), userDTO.getUserName(), userDTO.getUserEmail(), userDTO.getUserPassword(),"", LocalDateTime.now(), LocalDateTime.now());
             System.out.println("[userDAO] DTO를 entity로 이동및 db 저장");
             userRepo.save(ent);
             return true;
@@ -47,18 +52,25 @@ public class UserDataAccessObject {
     public boolean CompareDataToLogin(LoginPageDTO userLoginDTO) {
         userEntity ent = userRepo.getReferenceById(userLoginDTO.getUserLoginId());
         userLoginDTO.setUserLoginPassword(Sha256Encode.encrypt(userLoginDTO.getUserLoginPassword()));
-       if(userLoginDTO.getUserLoginPassword().equals(ent.getUserPassword())){
-           System.out.println("[userDAO] 전달받은 DTO와 일치하는 패스워드임");
-           return true;
-       }else{
-           System.out.println("[userDAO] 전달받은 DTO와 일치하지 않는 패스워드임");
-           return false;
-       }
+        if (userLoginDTO.getUserLoginPassword().equals(ent.getUserPassword())) {
+            System.out.println("[userDAO] 전달받은 DTO와 일치하는 패스워드임");
+            return true;
+        } else {
+            System.out.println("[userDAO] 전달받은 DTO와 일치하지 않는 패스워드임");
+            return false;
+        }
 
     }
 
+    // UserInfoDTO 로 리턴
     public UserInfoDTO ReturnUserInfo(String userID) {
         userEntity ent = userRepo.getReferenceById(userID);
         return new UserInfoDTO(ent.getUserID(), ent.getUserName(), ent.getUserEmail());
+    }
+
+    // UserProfilDTO 로 리턴
+    public UserProfilDTO ReturnUserProfilInfo(String userID) {
+        userEntity ent = userRepo.getReferenceById(userID);
+        return new UserProfilDTO(ent.getUserID(), ent.getUserName(), ent.getUserEmail(), ent.getUserIntroduce());
     }
 }
