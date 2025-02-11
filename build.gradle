@@ -32,8 +32,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // spring secure 비밀번호 암호화 사용하려고 추가
+    // spring secure 비밀번호 암호화 사용하려고 추가 * 사용안함. secure에 대한 공부필요
 //    implementation "org.springframework.boot:spring-boot-starter-security"
+
+    // 파일 입출력 관련 https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.11.0'
+
 }
 
 tasks.named('test') {

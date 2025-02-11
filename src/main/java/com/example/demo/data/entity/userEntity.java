@@ -25,11 +25,15 @@ public class userEntity {
 
     private String userPassword;
 
-    @ColumnDefault("")
     private String userIntroduce;
+
+    private String userProfilImg;
 
     private LocalDateTime userRegistDate;
 
+    /**
+     * [2025-02-11] userRecentConnectionDate는 이후 로그인 시 업데이트 되도록 설정 필요
+     */
     private LocalDateTime userRecentConnectionDate;
 
 }

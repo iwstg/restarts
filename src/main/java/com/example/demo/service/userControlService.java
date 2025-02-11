@@ -67,4 +67,26 @@ public class userControlService {
             return null;
         }
     }
+    /**
+     *  [2025-02-11] 사용자 프로필 정보 수정
+     *  닉네임 변경, 비밀번호 변경, 이메일 변경, 프로필 사진 변경, 자기소개 변경 기능 필요
+     */
+    public void ChangeUserNameTo(String SessionId, String name) {
+        userDAO.ChangeUserInDBName(SessionId, name);
+    }
+
+    public void ChangeUserPasswordTo(String SessionId, String password) {
+        userDAO.ChangeUserInDBPassword(SessionId, password);
+    }
+
+    public void ChangeUserEmailTo(String SessionId, String email) {
+        userDAO.ChangeUserInDBEmail(SessionId, email);
+    }
+
+    public void ChangeUserIntroduceTo(String SessionId, String introduce) {
+        userDAO.ChangeUserInDBIntroduce(SessionId, introduce);
+    }
+
+    
+
 }

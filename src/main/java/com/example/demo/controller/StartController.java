@@ -7,19 +7,15 @@ import com.example.demo.data.dto.UserProfilDTO;
 import com.example.demo.service.userControlService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Controller
 public class StartController {
@@ -96,7 +92,7 @@ public class StartController {
 
             HttpSession session = req.getSession();
             session.setAttribute("userId", form.getUserLoginId());
-            session.setMaxInactiveInterval(60);
+            session.setMaxInactiveInterval(3600);
             System.out.println("[Controller] 세션 : " + session.getAttribute("userId"));
             return "MainPage";
         }else
@@ -130,5 +126,58 @@ public class StartController {
         // 들어온 데이터가 정상이고 처리도 정상으로 됐으면 안내페이지로
         return "LoginPage";
     }
+
+
+    /**
+     *  [2025-02-11] 사용자 프로필 정보 수정
+     *  닉네임 변경, 비밀번호 변경, 이메일 변경, 프로필 사진 변경, 자기소개 변경 기능 필요
+     */
+
+    // 유저정보 수정 페이지 접근
+    @GetMapping("ChangeUserInfo")
+    public String changeuserinfopage(@SessionAttribute(name="userId", required = false)String userID, Model model){
+        UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
+        model.addAttribute("userInfo", userProfilinfo);
+        return "유저정보 수정 페이지입니다.";
+    }
+
+    @PostMapping("ChangeUserName")
+    public String changeuserNameinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
+        System.out.println("받아온 값이어요? : " + maps.get("name"));
+        String sessionId = (String)req.getSession().getAttribute("userId");
+        userService.ChangeUserNameTo(sessionId, maps.get("name"));
+        return "testpage";
+    }
+
+    @PostMapping("ChangeUserPassword")
+    public String changeuserPasswordinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
+
+        String sessionId = req.getSession().getAttribute("userId").toString();
+        userService.ChangeUserPasswordTo(sessionId, maps.get("password"));
+        return "패스워드가 변경되었습니다.";
+    }
+
+    @PostMapping("ChangeUserEmail")
+    public String changeuserEmailinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
+        String sessionId = req.getSession().getAttribute("userId").toString();
+        userService.ChangeUserEmailTo(sessionId, maps.get("email"));
+        return "testpage";
+    }
+
+    @PostMapping("ChangeUserIntroduce")
+    public String changeuserIntroduceinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
+        String sessionId = req.getSession().getAttribute("userId").toString();
+        userService.ChangeUserIntroduceTo(sessionId, maps.get("introduce"));
+        return "testpage";
+    }
+
+//    @PostMapping("ChangeUserProfilImg")
+//    public String changeuserProfilImginDB(){
+//
+//
+//        String returnString = "에서 " + "으로 변경되었습니다.";
+//        return returnString;
+//    }
+
 
 }

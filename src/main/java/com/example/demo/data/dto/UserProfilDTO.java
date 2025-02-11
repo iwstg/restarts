@@ -12,5 +12,6 @@ public class UserProfilDTO {
     private String userName;
     private String userEmail;
     private String userIntroduce;
+    private String userProfilImg;
 
 }
