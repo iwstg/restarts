@@ -7,17 +7,23 @@ import com.example.demo.data.dto.UserInfoDTO;
 import com.example.demo.data.dto.UserProfilDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class userControlService {
     UserDataAccessObject userDAO;
+
 
     @Autowired
     public userControlService(UserDataAccessObject userDAO) {
@@ -87,6 +93,8 @@ public class userControlService {
         userDAO.ChangeUserInDBIntroduce(SessionId, introduce);
     }
 
-    
 
+    public void DeleteUser(String sessionId) {
+        userDAO.DeleteUserInDB(sessionId);
+    }
 }

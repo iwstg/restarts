@@ -6,12 +6,18 @@ import com.example.demo.data.dto.RegisterPageDTO;
 import com.example.demo.data.dto.UserInfoDTO;
 import com.example.demo.data.dto.UserProfilDTO;
 import com.example.demo.data.entity.userEntity;
+import com.example.demo.data.entity.userProfilFileEntity;
+import com.example.demo.data.repository.userProfilFileRepository;
 import com.example.demo.data.repository.userRepository;
 import jakarta.transaction.Transactional;
 import jdk.swing.interop.SwingInterOpUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +26,7 @@ import java.util.List;
 @Transactional
 public class UserDataAccessObject {
     userRepository userRepo;
+
 
     @Autowired
     public UserDataAccessObject(userRepository userRepo) {
@@ -119,5 +126,10 @@ public class UserDataAccessObject {
                 introduce, userinfoent.getUserProfilImg(),
                 userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
         userRepo.save(ent);
+    }
+
+    @Transactional
+    public void DeleteUserInDB(String sessionId) {
+        userRepo.deleteById(sessionId);
     }
 }

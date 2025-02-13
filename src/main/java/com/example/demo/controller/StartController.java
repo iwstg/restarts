@@ -10,11 +10,12 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 @Controller
@@ -143,7 +144,7 @@ public class StartController {
 
     @PostMapping("ChangeUserName")
     public String changeuserNameinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
-        System.out.println("받아온 값이어요? : " + maps.get("name"));
+        System.out.println("받아온 값 : " + maps.get("name"));
         String sessionId = (String)req.getSession().getAttribute("userId");
         userService.ChangeUserNameTo(sessionId, maps.get("name"));
         return "testpage";
@@ -154,7 +155,7 @@ public class StartController {
 
         String sessionId = req.getSession().getAttribute("userId").toString();
         userService.ChangeUserPasswordTo(sessionId, maps.get("password"));
-        return "패스워드가 변경되었습니다.";
+        return "testpage";
     }
 
     @PostMapping("ChangeUserEmail")
@@ -171,13 +172,21 @@ public class StartController {
         return "testpage";
     }
 
-//    @PostMapping("ChangeUserProfilImg")
-//    public String changeuserProfilImginDB(){
-//
-//
-//        String returnString = "에서 " + "으로 변경되었습니다.";
-//        return returnString;
-//    }
+    @PostMapping("DeleteUser")
+    public String deleteuserInfo(@SessionAttribute(name = "userId", required = false) String sessionId){
+        userService.DeleteUser(sessionId);
+        return "testpage";
+    }
+
+    /**
+     * [2025-02-13] 파일 업로드 컨트롤러 추가
+     */
+    @PostMapping("UserProfilImgUpload")
+    public String userProfilImgFileUpload(@SessionAttribute(name = "userId", required = false) String sessionId,
+                                          @RequestPart MultipartFile files) throws Exception{
+        userService.UploadProfilImg(sessionId, files);
+        return "testpage";
+    }
 
 
 }
