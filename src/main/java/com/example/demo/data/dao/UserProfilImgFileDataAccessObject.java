@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 
 @Service
 @Transactional
@@ -22,16 +23,15 @@ public class UserProfilImgFileDataAccessObject {
         this.fioRepo = fioRepo;
     }
 
-    userRepository userRepo;
     /**
      * [2025-02-13] 파일 업로드 dao 기능 추가
      */
 
     @Transactional
-    public void ProfilImgUpload(String sessionId, MultipartFile files){
+    public void UploadProfilImg(String sessionId, MultipartFile files){
         String filename = files.getOriginalFilename();
         String fileextension = FilenameUtils.getExtension(filename).toLowerCase();
-        String fileURL = "C:\\Beginner-spring\\restarts\\src\\main\\resources\\ProfilImg\\";
+        String fileURL = "C:/Beginner-spring/restarts/src/main/resources/ProfilImg/";
         File savefiles;
         String savefileName;
         do {
@@ -39,19 +39,24 @@ public class UserProfilImgFileDataAccessObject {
             savefiles = new File(fileURL + savefileName);
         } while (savefiles.exists());
 
+        savefiles.getParentFile().mkdirs();
+        try {
+            files.transferTo(savefiles);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         userProfilFileEntity f = new userProfilFileEntity();
         f.setFilename(savefileName);
         f.setRealname(filename);
         f.setFileURL(fileURL);
         fioRepo.save(f);
 
-        userEntity userinfoent = userRepo.getReferenceById(sessionId);
-        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
-                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
-                userinfoent.getUserIntroduce(), savefileName,
-                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
-        userRepo.save(ent);
+//        userEntity userinfoent = userRepo.getReferenceById(sessionId);
+//        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
+//                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
+//                userinfoent.getUserIntroduce(), savefileName,
+//                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
+//        userRepo.save(ent);
     }
-
-
 }

@@ -97,4 +97,5 @@ public class userControlService {
     public void DeleteUser(String sessionId) {
         userDAO.DeleteUserInDB(sessionId);
     }
+
 }

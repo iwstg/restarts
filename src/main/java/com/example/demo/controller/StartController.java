@@ -178,15 +178,7 @@ public class StartController {
         return "testpage";
     }
 
-    /**
-     * [2025-02-13] 파일 업로드 컨트롤러 추가
-     */
-    @PostMapping("UserProfilImgUpload")
-    public String userProfilImgFileUpload(@SessionAttribute(name = "userId", required = false) String sessionId,
-                                          @RequestPart MultipartFile files) throws Exception{
-        userService.UploadProfilImg(sessionId, files);
-        return "testpage";
-    }
+
 
 
 }
