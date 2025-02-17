@@ -54,9 +54,9 @@ public class userControlService {
     /**
      * [2025-01-31] 사용자 정보 요청시 DTO 객체로 반환
      */
-    public UserInfoDTO ReturnUserInfoUseID(String userID){
+    public UserProfilDTO ReturnUserALLInfoUseID(String userID){
         if(userDAO.checkUserId(userID)){
-            return userDAO.ReturnUserInfo(userID);
+            return userDAO.ReturnUserALLInfo(userID);
         }else{
             return null;
         }
@@ -68,7 +68,7 @@ public class userControlService {
      */
     public UserProfilDTO ReturnUserProfilInfoUseID(String userID){
         if(userDAO.checkUserId(userID)){
-            return userDAO.ReturnUserProfilInfo(userID);
+            return userDAO.ReturnUserALLInfo(userID);
         }else{
             return null;
         }
@@ -98,4 +98,11 @@ public class userControlService {
         userDAO.DeleteUserInDB(sessionId);
     }
 
+    public void userProfilSave(String sessionId, String savefilename) {
+        userDAO.ChangeUserInDBProfilImg(sessionId, savefilename);
+    }
+
+    public void ChangeUserRecentConnectionTime(String SessionId) {
+        userDAO.ChangeUserRecentConnectionTimeInDB(SessionId);
+    }
 }

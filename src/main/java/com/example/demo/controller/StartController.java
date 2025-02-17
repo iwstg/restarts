@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.data.dto.LoginPageDTO;
 import com.example.demo.data.dto.RegisterPageDTO;
-import com.example.demo.data.dto.UserInfoDTO;
+import com.example.demo.service.userProfilImgService;
 import com.example.demo.data.dto.UserProfilDTO;
 import com.example.demo.service.userControlService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +22,12 @@ import java.util.HashMap;
 public class StartController {
 
     userControlService userService;
+    userProfilImgService userProfilService;
 
     @Autowired
-    public StartController(userControlService userService){
+    public StartController(userControlService userService, userProfilImgService userProfilService){
         this.userService=userService;
+        this.userProfilService=userProfilService;
     }
 
     /**
@@ -36,17 +38,15 @@ public class StartController {
      */
     @GetMapping("/")
     public String goToLoginPage(@SessionAttribute(name="userId", required = false)String userID,Model model) {
-        System.out.println("로그인 페이지로 ( / -> Loginpage ) ");
-
         System.out.println("[Controller] 세션 확인 로직 실행");
-
-
         if(userID == null){
             System.out.println("[Controller] 세션에 가입된 유저정보 없음");
+            System.out.println("로그인 페이지로 ( / -> Loginpage ) ");
         }else{
-            UserInfoDTO userinfo = userService.ReturnUserInfoUseID(userID);
+            UserProfilDTO userinfo = userService.ReturnUserALLInfoUseID(userID);
             System.out.println("[Controller] 세션으로 등록된 유저정보 확인");
             System.out.println(userinfo.toString());
+            model.addAttribute("userinfo", userinfo);
             return "MainPage";
         }
         return "LoginPage";
@@ -95,6 +95,7 @@ public class StartController {
             session.setAttribute("userId", form.getUserLoginId());
             session.setMaxInactiveInterval(3600);
             System.out.println("[Controller] 세션 : " + session.getAttribute("userId"));
+            userService.ChangeUserRecentConnectionTime(form.getUserLoginId());
             return "MainPage";
         }else
             return "LoginPage";
@@ -104,6 +105,8 @@ public class StartController {
     @PostMapping("MainPageLogOut")
     public String TryToLogOut(HttpServletRequest req){
         HttpSession session = req.getSession(false);
+        String sessionID = (String)session.getAttribute("userId");
+        userService.ChangeUserRecentConnectionTime(sessionID);
         session.invalidate();
         System.out.println("[Controller] 세션 박살! 로그인페이지로!");
         return "LoginPage";
@@ -178,7 +181,13 @@ public class StartController {
         return "testpage";
     }
 
-
+    @PostMapping("UserProfilImgUpload")
+    public String userProfilImgFileUpload(@SessionAttribute(name = "userId", required = false) String sessionId,
+                                          @RequestParam(name = "files") MultipartFile files) throws Exception{
+        String Filename = userProfilService.profilImgUpload(sessionId, files);
+        userService.userProfilSave(sessionId, Filename);
+        return "testpage";
+    }
 
 
 }

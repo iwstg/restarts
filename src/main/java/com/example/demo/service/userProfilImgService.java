@@ -25,8 +25,7 @@ public class userProfilImgService {
     }
 
 
-    public void profilImgUpload(String sessionId, MultipartFile files) {
-        saveDAO.UploadProfilImg(sessionId, files);
-
+    public String profilImgUpload(String sessionId, MultipartFile files) {
+        return saveDAO.UploadProfilImg(sessionId, files);
     }
 }

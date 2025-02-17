@@ -28,10 +28,14 @@ public class UserProfilImgFileDataAccessObject {
      */
 
     @Transactional
-    public void UploadProfilImg(String sessionId, MultipartFile files){
+    public String UploadProfilImg(String sessionId, MultipartFile files){
         String filename = files.getOriginalFilename();
         String fileextension = FilenameUtils.getExtension(filename).toLowerCase();
-        String fileURL = "C:/Beginner-spring/restarts/src/main/resources/ProfilImg/";
+//        노트북 경로
+//        String fileURL = "C:/Beginner-spring/restarts/src/main/resources/ProfilImg/";
+
+//        PC 경로
+        String fileURL = "C:/Users/KHB/IdeaProjects/restarts/src/main/resources/ProfilImg/";
         File savefiles;
         String savefileName;
         do {
@@ -58,5 +62,7 @@ public class UserProfilImgFileDataAccessObject {
 //                userinfoent.getUserIntroduce(), savefileName,
 //                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
 //        userRepo.save(ent);
+
+        return savefileName;
     }
 }

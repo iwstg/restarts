@@ -77,7 +77,7 @@ public class UserDataAccessObject {
     }
 
     // UserProfilDTO 로 리턴
-    public UserProfilDTO ReturnUserProfilInfo(String userID) {
+    public UserProfilDTO ReturnUserALLInfo(String userID) {
         userEntity ent = userRepo.getReferenceById(userID);
         return new UserProfilDTO(ent.getUserID(), ent.getUserName(), ent.getUserEmail(), ent.getUserIntroduce(), ent.getUserProfilImg());
     }
@@ -119,6 +119,16 @@ public class UserDataAccessObject {
     }
 
     @Transactional
+    public void ChangeUserInDBProfilImg(String SessionId, String savefilename) {
+        userEntity userinfoent = userRepo.getReferenceById(SessionId);
+        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
+                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
+                userinfoent.getUserIntroduce(), savefilename,
+                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
+        userRepo.save(ent);
+    }
+
+    @Transactional
     public void ChangeUserInDBIntroduce(String SessionId, String introduce) {
         userEntity userinfoent = userRepo.getReferenceById(SessionId);
         userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
@@ -129,7 +139,20 @@ public class UserDataAccessObject {
     }
 
     @Transactional
+    public void ChangeUserRecentConnectionTimeInDB(String SessionId) {
+        userEntity userinfoent = userRepo.getReferenceById(SessionId);
+        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
+                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
+                userinfoent.getUserIntroduce(), userinfoent.getUserProfilImg(),
+                userinfoent.getUserRegistDate(), LocalDateTime.now());
+        userRepo.save(ent);
+    }
+
+    @Transactional
     public void DeleteUserInDB(String sessionId) {
         userRepo.deleteById(sessionId);
     }
+
+
+
 }
