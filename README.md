@@ -1,8 +1,21 @@
 <div align="center">
 
   
-  ## Spring Boot Api 공부
+  ## Spring Boot Api 공부 [25-03-08]
 
+개발된 기능들 ~<br>
+- Mysql DB연동
+- 로그인 및 회원가입 기능
+- 회원 정보 수정기능
+- 게시글 추가 수정기능 (삭제 미포함)
+
+앞으로의 추가예정 기능들~<br>
+- 게시글 삭제 기능
+- 계정 룰 적용 ( 회원, 부관리자, 관리자 )
+- OAuth 2.0 를 이용한 회원가입
+
+
+</div>
 <!--
 <details><summary>[2025-01-14] Spring Boot 환경 구축 및 로그인 회원가입 페이지 생성</summary>
   MVC 모델을 적용하여 페이지의 폼 데이터를 전달받을 DTO생성<br>
