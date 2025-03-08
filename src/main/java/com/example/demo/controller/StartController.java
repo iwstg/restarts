@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.data.dto.LoginPageDTO;
-import com.example.demo.data.dto.RegisterPageDTO;
+import com.example.demo.data.dto.*;
+import com.example.demo.service.userBoardService;
 import com.example.demo.service.userProfilImgService;
-import com.example.demo.data.dto.UserProfilDTO;
 import com.example.demo.service.userControlService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -17,17 +16,20 @@ import javax.swing.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 @Controller
 public class StartController {
 
     userControlService userService;
     userProfilImgService userProfilService;
+    userBoardService userBoardserv;
 
     @Autowired
-    public StartController(userControlService userService, userProfilImgService userProfilService){
-        this.userService=userService;
-        this.userProfilService=userProfilService;
+    public StartController(userControlService userService, userProfilImgService userProfilService, userBoardService userBoardserv){
+        this.userService =userService;
+        this.userProfilService =userProfilService;
+        this.userBoardserv =userBoardserv;
     }
 
     /**
@@ -124,13 +126,21 @@ public class StartController {
     public String runRegisterRequest(@RequestBody RegisterPageDTO form) {
         System.out.println(form.toString());
         System.out.println(form);
-        // form 에서 받아온 DTO로 회원가입 서비스 진행
-        userService.userRegistService(form);
-        System.out.println("[Controller] form 데이터 전송 ( Controller -> Service");
-        // 들어온 데이터가 정상이고 처리도 정상으로 됐으면 안내페이지로
-        return "LoginPage";
+        // Form 에서 받아온 회원 정보가 요구사항에 맞는지 확인
+        if (!userService.CheckDuplEmail(form.getUserEmail()) &&  // 이메일 중복 체크
+                Pattern.matches("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", form.getUserPassword()) && // 패스워드 유효성 체크
+                Pattern.matches("^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", form.getUserEmail()) && // 이메일 유효성 체크
+                Pattern.matches("^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", form.getUserName())) { // 닉네임 유효성 체크
+            // form 에서 받아온 DTO로 회원가입 서비스 진행
+            userService.userRegistService(form);
+            System.out.println("[Controller] form 데이터 전송 ( Controller -> Service");
+            // 들어온 데이터가 정상이고 처리도 정상으로 됐으면 안내페이지로
+            return "LoginPage";
+        } else {
+            System.out.println("조건에 맞지않습니다.");
+            return "LoginPage";
+        }
     }
-
 
     /**
      *  [2025-02-11] 사용자 프로필 정보 수정
@@ -189,5 +199,43 @@ public class StartController {
         return "testpage";
     }
 
+
+    /**
+     *
+     * [2025-03-08] 게시판 기능 구현
+     */
+
+    // 게시글 추가 기능
+    @PostMapping("UserBoardAddPage")
+    public String AddNewUserBoard(@SessionAttribute(name="userId", required = false) String sessionId,
+                                  @RequestBody UserBoardDTO board){
+
+        System.out.println(board.toString());
+        if(Pattern.matches("(?=.*[0-9]).{4}", board.getModify_pwd())) {
+            userBoardserv.createNewBoard(board, sessionId);
+        }else{
+            System.out.println("조건에 맞지 않습니다.");
+        }
+
+        return "mainPage";
+    }
+
+    // 게시글 수정 기능
+    @PostMapping("UserBoardModify/{postId}/modify")
+    public String ModifyUserBoard(@PathVariable("postId") int Id,
+                                  @SessionAttribute(name="userId", required = false) String sessionId,
+                                  @RequestBody UserBoardModifyDTO dto){
+        // 개시글의 글 번호를 수정하기 위한 패스워드 확인
+        System.out.println("컨트롤러: "+dto.toString());
+        if(userBoardserv.modifyPwCheck(Id, dto)){
+            System.out.println("패스워드 일치, 수정페이지 접근");
+
+            userBoardserv.modifyBoard(Id, sessionId, dto);
+
+        }else{
+            System.out.println("패스워드가 일치하지않음. 수정불가");
+        }
+        return "mainpage";
+    }
 
 }

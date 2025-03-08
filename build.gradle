@@ -40,6 +40,9 @@ dependencies {
     // 파일 랜덤 스트링값 생성용
     implementation 'org.apache.commons:commons-lang3:3.0'
 
+    // 회원가입 유효성 검사
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 tasks.named('test') {

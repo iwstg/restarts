@@ -105,4 +105,10 @@ public class userControlService {
     public void ChangeUserRecentConnectionTime(String SessionId) {
         userDAO.ChangeUserRecentConnectionTimeInDB(SessionId);
     }
+
+
+    public boolean CheckDuplEmail(String userEmail) {
+        return userDAO.EmailDuplicheck(userEmail);
+    }
+
 }

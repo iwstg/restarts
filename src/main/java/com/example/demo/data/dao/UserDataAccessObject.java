@@ -14,6 +14,8 @@ import jdk.swing.interop.SwingInterOpUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,6 +90,12 @@ public class UserDataAccessObject {
      */
     @Transactional
     public void ChangeUserInDBName(String SessionId, String name) {
+
+        userRepo.UpdateName(name, SessionId);
+
+        /**
+         * [2025-03-08] jpa update 쿼리를 직접 생성하여 사용하지 않음
+
         userEntity userinfoent = userRepo.getReferenceById(SessionId);
         System.out.println("정보값: " + userinfoent.toString());
         userEntity ent = new userEntity(userinfoent.getUserID(), name,
@@ -95,7 +103,10 @@ public class UserDataAccessObject {
                             userinfoent.getUserIntroduce(), userinfoent.getUserProfilImg(),
                             userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
         userRepo.save(ent);
+         */
     }
+
+
 
     @Transactional
     public void ChangeUserInDBPassword(String SessionId, String password) {
@@ -154,5 +165,7 @@ public class UserDataAccessObject {
     }
 
 
-
+    public boolean EmailDuplicheck(String userEmail) {
+        return userRepo.existsById(userEmail);
+    }
 }
