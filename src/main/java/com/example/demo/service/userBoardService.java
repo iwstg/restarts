@@ -21,12 +21,20 @@ public class userBoardService {
         boardDAO.createNewBoardInDB(board, sessionId);
     }
 
-    public boolean modifyPwCheck(int id, UserBoardModifyDTO dto) {
-        System.out.println("서비스: "+dto.getModify_pwd());
-        return boardDAO.modifyBoard(id, dto.getModify_pwd());
+    public boolean modifyPwCheck(int id, String pwd) {
+        System.out.println("서비스: "+pwd);
+        return boardDAO.modifyBoard(id, pwd);
     }
 
     public void modifyBoard(int id, String sessionId, UserBoardModifyDTO dto) {
         boardDAO.modifyBoardTo(id, sessionId, dto);
+    }
+
+    public boolean DeletePwCheck(int id, String sessionId) {
+        return boardDAO.deleteBoard(id, sessionId);
+    }
+
+    public void DeleteBoard(int id){
+        boardDAO.deleteBoardTo(id);
     }
 }

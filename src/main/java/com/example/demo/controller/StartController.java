@@ -227,7 +227,7 @@ public class StartController {
                                   @RequestBody UserBoardModifyDTO dto){
         // 개시글의 글 번호를 수정하기 위한 패스워드 확인
         System.out.println("컨트롤러: "+dto.toString());
-        if(userBoardserv.modifyPwCheck(Id, dto)){
+        if(userBoardserv.modifyPwCheck(Id, dto.getModify_pwd())){
             System.out.println("패스워드 일치, 수정페이지 접근");
 
             userBoardserv.modifyBoard(Id, sessionId, dto);
@@ -237,5 +237,30 @@ public class StartController {
         }
         return "mainpage";
     }
+
+    @GetMapping("UserBoardModify/{postId}/deletepage")
+    public String deleteCheckPage(@SessionAttribute(name="userId", required = false) String sessionId){
+        // 게시글 삭제 접근
+        return "mainpage";
+
+    }
+
+    @PostMapping("UserBoardModify/{postId}/delete")
+    public String DeleteUserBoard(@PathVariable("postId") int Id,
+                                  @SessionAttribute(name="userId", required = false) String sessionId,
+                                  @RequestBody String modify_pwd) {
+        // 개시글을 삭제하기 위한 패스워드 및 사용자 정보 확인
+        if(userBoardserv.modifyPwCheck(Id, modify_pwd) && userBoardserv.DeletePwCheck(Id, sessionId)){
+            System.out.println("패스워드 일치, 수정페이지 접근");
+
+            userBoardserv.DeleteBoard(Id);
+
+        }else{
+            System.out.println("패스워드 혹은 글 작성자가 아님. 수정불가");
+        }
+        return "mainpage";
+
+    }
+
 
 }

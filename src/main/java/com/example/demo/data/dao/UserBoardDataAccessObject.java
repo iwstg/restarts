@@ -7,6 +7,7 @@ import com.example.demo.data.repository.userBoardRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,10 +34,8 @@ public class UserBoardDataAccessObject {
 
     // 게시판 수정 기능 ( 해당 번호 게시글의 패스워드 체크)
     public boolean modifyBoard(int id, String modifyPwd) {
-        System.out.println("전달받은 패스워드: " + modifyPwd);
         userBoardEntity ent = boardRepo.findByboardnum(id);
-        System.out.println(ent.toString());
-        System.out.println(ent.getModify_pwd());
+
         return ent.getModify_pwd().equals(modifyPwd);
     }
 
@@ -46,5 +45,17 @@ public class UserBoardDataAccessObject {
          *  userBoardRepository에 정의된 쿼리로 업데이트 진행
          */
         boardRepo.UpdateBoard(dto.getTitle(), dto.getContents(), sessionId, id, LocalDateTime.now());
+    }
+
+    public boolean deleteBoard(int id, String sessionId) {
+        System.out.println("삭제 로직 dao 접근");
+        userBoardEntity ent = boardRepo.findByboardnum(id);
+        System.out.println("글번호: "+id+" / 작성자: "+ent.getCreate_user()+" / 접근자: "+sessionId);
+
+        return ent.getCreate_user().equals(sessionId);
+    }
+
+    public void deleteBoardTo(int id){
+        boardRepo.deleteBybaordnum(id);
     }
 }

@@ -17,6 +17,11 @@ public interface userBoardRepository extends JpaRepository<userBoardEntity, Stri
 
     @Transactional
     @Modifying
-    @Query(value = "Update mysqltest.user_board set title = :title, contents = :contents, modified_user = :user, modified_date = :time WHERE user_board.boardnum = :num", nativeQuery = true)
+    @Query(value = "UPDATE mysqltest.user_board SET title = :title, contents = :contents, modified_user = :user, modified_date = :time WHERE user_board.boardnum = :num", nativeQuery = true)
     void UpdateBoard(@Param("title") String title, @Param("contents") String contents, @Param("user") String user, @Param("num") int num, @Param("time")LocalDateTime time);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM mysqltest.user_board WHERE boardnum= :id", nativeQuery = true)
+    void deleteBybaordnum(@Param("id") int num);
 }
