@@ -59,7 +59,7 @@ public class StartController {
     /**
      * [2025-02-04] 메인페이지 접근 시 Session 정보의 ID로 값을 불러와 해당 계정의 게시글 및 사용자 정보를 불러옴
      */
-    @GetMapping("MainPages")
+    @GetMapping("MainPage")
     public String MainPageCallResource(@SessionAttribute(name="userId", required = false)String userID, Model model){
 
         UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
@@ -101,7 +101,7 @@ public class StartController {
             session.setMaxInactiveInterval(3600);
             System.out.println("[Controller] 세션 : " + session.getAttribute("userId"));
             userService.ChangeUserRecentConnectionTime(form.getUserLoginId());
-            return "redirect:/MainPage";
+            return "MainPage";
         }else
             return "LoginPage";
     }
