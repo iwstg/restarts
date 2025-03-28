@@ -37,6 +37,8 @@ public class StartController {
      * 이후, session 기능을 넣고 나서부터는 로그인페이지거나 세션에 맞는 페이지로 리다이랙션 기능 필요
      *
      * [2025-01-31] 세션 기능 추가..예정 시도해보는중 새로운 브런치
+     *
+     * [2025-03-25] API만 개발한 내용을 html 에 적용하여 시각화 작업
      */
     @GetMapping("/")
     public String goToLoginPage(@SessionAttribute(name="userId", required = false)String userID,Model model) {
@@ -130,7 +132,8 @@ public class StartController {
         if (!userService.CheckDuplEmail(form.getUserEmail()) &&  // 이메일 중복 체크
                 Pattern.matches("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", form.getUserPassword()) && // 패스워드 유효성 체크
                 Pattern.matches("^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", form.getUserEmail()) && // 이메일 유효성 체크
-                Pattern.matches("^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", form.getUserName())) { // 닉네임 유효성 체크
+                Pattern.matches("^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", form.getUserName()) && // 닉네임 유효성 체크
+                Pattern.matches("^[a-z0-9-_]{2,10}$", form.getUserId())) { // 아이디 유효성 체크
             // form 에서 받아온 DTO로 회원가입 서비스 진행
             userService.userRegistService(form);
             System.out.println("[Controller] form 데이터 전송 ( Controller -> Service");
