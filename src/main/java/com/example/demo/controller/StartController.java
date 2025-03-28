@@ -59,20 +59,21 @@ public class StartController {
     /**
      * [2025-02-04] 메인페이지 접근 시 Session 정보의 ID로 값을 불러와 해당 계정의 게시글 및 사용자 정보를 불러옴
      */
-    @GetMapping("/MainPage")
+    @GetMapping("MainPages")
     public String MainPageCallResource(@SessionAttribute(name="userId", required = false)String userID, Model model){
 
         UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
-
+        System.out.println("메인페이지 접근");
+        System.out.println(userProfilinfo.toString());
         //회원 정보내용
-        model.addAttribute("userProfil", userProfilinfo);
+        model.addAttribute("userinfo", userProfilinfo);
 
 
         //게시글 내용
 
 
 
-        return "메인페이지 정보 전달완료";
+        return "MainPage";
     }
 
 
@@ -91,16 +92,16 @@ public class StartController {
      * [2025-01-31] 로그인페이지에서 입력받은 내용과 일치하는 정보가 DB에 존재할경우 로그인 진행
      */
     @PostMapping("LoginTry")
-    public String runLoginRequest(@RequestBody LoginPageDTO form, HttpServletRequest req){
+    public String runLoginRequest(@RequestBody LoginPageDTO form, HttpServletRequest req, Model model){
         if(userService.userTryToLogin(form)) {
             //로그인 성공 시
-
+            System.out.println("로그인 정보 : " + form.toString());
             HttpSession session = req.getSession();
             session.setAttribute("userId", form.getUserLoginId());
             session.setMaxInactiveInterval(3600);
             System.out.println("[Controller] 세션 : " + session.getAttribute("userId"));
             userService.ChangeUserRecentConnectionTime(form.getUserLoginId());
-            return "MainPage";
+            return "redirect:/MainPage";
         }else
             return "LoginPage";
     }
@@ -129,7 +130,7 @@ public class StartController {
         System.out.println(form.toString());
         System.out.println(form);
         // Form 에서 받아온 회원 정보가 요구사항에 맞는지 확인
-        if (!userService.CheckDuplEmail(form.getUserEmail()) &&  // 이메일 중복 체크
+        if (!userService.CheckDuplId(form.getUserId()) &&  // 아이디 중복 체크
                 Pattern.matches("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", form.getUserPassword()) && // 패스워드 유효성 체크
                 Pattern.matches("^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", form.getUserEmail()) && // 이메일 유효성 체크
                 Pattern.matches("^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", form.getUserName()) && // 닉네임 유효성 체크
@@ -141,7 +142,7 @@ public class StartController {
             return "LoginPage";
         } else {
             System.out.println("조건에 맞지않습니다.");
-            return "LoginPage";
+            return "failRegist";
         }
     }
 
@@ -150,13 +151,30 @@ public class StartController {
      *  닉네임 변경, 비밀번호 변경, 이메일 변경, 프로필 사진 변경, 자기소개 변경 기능 필요
      */
 
+
     // 유저정보 수정 페이지 접근
+    @PostMapping("CheckUserPasswordForChange")
+    public String Accessschangeuserinfo(@SessionAttribute(name="userId", required = false)String userID, @RequestBody HashMap<String, String> maps){
+        LoginPageDTO userlogin = new LoginPageDTO(userID, maps.get("password"));
+        if(userService.userTryToLogin(userlogin)) {
+            userService.ChangeUserRecentConnectionTime(userID);
+            System.out.println("회원정보 수정페이지 접근");
+            return "UserProfilChangePage";
+        }else{
+            System.out.println("회원정보 수정페이지 접근불가. 패스워드 일치하지않음");
+            return "MainPage";
+        }
+    }
+
     @GetMapping("ChangeUserInfo")
     public String changeuserinfopage(@SessionAttribute(name="userId", required = false)String userID, Model model){
         UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
         model.addAttribute("userInfo", userProfilinfo);
-        return "유저정보 수정 페이지입니다.";
+        System.out.println("현재 회원정보 변경에 접근한 정보 :" +userID);
+        return "AccessUserProfilChangePage";
     }
+
+
 
     @PostMapping("ChangeUserName")
     public String changeuserNameinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
@@ -201,6 +219,8 @@ public class StartController {
         userService.userProfilSave(sessionId, Filename);
         return "testpage";
     }
+
+
 
 
     /**

@@ -111,4 +111,8 @@ public class userControlService {
         return userDAO.EmailDuplicheck(userEmail);
     }
 
+    public boolean CheckDuplId(String userId) {
+        return userDAO.UserIdDuplicheck(userId);
+    }
+
 }

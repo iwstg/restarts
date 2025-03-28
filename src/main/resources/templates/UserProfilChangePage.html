@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>수정할 정보를 작성해주세요</h2>
+
+<form id="login-form" action="ChangeUserProfilThings" method="post">
+  ▼ 현재 프로필 사진 <br>
+  <img th:src="@{'/ProfilImg/'+${userinfo.userProfilImg}}"/> <br><br>
+
+  변경할 프로필 사진 : <button>업로드</button> <br><br>
+
+  <h1> ▼ 닉네임 </h1>
+  변경 전 : <span th:text="${userinfo.userName}">null</span>  <br>
+  변경 후 : <input type="text" id="changeName" name="changeName" placeholder="변경할 닉네임">
+
+  <h1> ▼ 자기소개 </h1>
+  변경 전 : <span th:text="${userinfo.userIntroduce}">null</span> <br>
+  변경 후 : <input type="text" id="changeIntro" name="changeIntro" placeholder="변경할 자기소개"><br>
+
+  <h1> ▼ 패스워드 </h1>
+  비밀번호 : <input type="password" id="changePassword" name="changePassword" placeholder="비밀번호"><br>
+  비밀번호 확인 : <input type="password" id="changePasswordCheck" name="changePasswordCheck" placeholder="비밀번호 확인"><br>
+
+  <h1> ▼ 이메일 </h1>
+  변경 전 : <span th:text="${userinfo.userEmail}">null</span> <br>
+  변경 후 : <input type="text" id="changeEmail" name="changeEmail" placeholder="변경할 이메일"><br><br><br>
+
+  <button type="submit" value="로그인">변경</button><button type="submit" value="로그인">계정 삭제</button>
+</form>
+
+</body>
+</html>

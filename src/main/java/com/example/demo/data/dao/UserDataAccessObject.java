@@ -168,4 +168,7 @@ public class UserDataAccessObject {
     public boolean EmailDuplicheck(String userEmail) {
         return userRepo.existsById(userEmail);
     }
+
+    public boolean UserIdDuplicheck(String userId) { return userRepo.existsById(userId); }
+
 }

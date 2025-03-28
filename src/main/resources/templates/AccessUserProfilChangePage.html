@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1 th:text="${userinfo.userID}+ '님이 맞으신가요?'"> 잘못된 접근 </h1>
+
+<h2>회원 정보 수정을 위해 패스워드를 입력해주세요</h2>
+
+<form id="login-form" action="CheckUserPasswordForChange" method="post">
+  <input type="text" id="userpassword" name="password" placeholder="비밀번호">
+  <button type="submit" value="로그인">확인</button>
+</form>
+
+</body>
+</html>

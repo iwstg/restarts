@@ -29,7 +29,7 @@
             margin-bottom: 15px;
             text-align:center;
         }
-        #Register-form > fieldset{
+        #Register-form > input{
             width: 100%;
             height: 48px;
             padding: 0 10px;
@@ -68,111 +68,48 @@
 <div id="mains" class="Register-wrapper">
     <h2>Regist</h2>
     <form id="Register-form" action="RegisterRequest" method="post">
-        <fieldset>
-            <input type="text" id="userId" placeholder="아이디" name="UserId">
-        </fieldset>
-
-        <div class="success-message-id hide">사용할 수 있는 아이디입니다</div>
-        <div class="failure-message-id hide">이미 사용중인 아이디 입니다.</div>
-        <div class="failure-message2-id hide">영어 또는 숫자만 가능합니다</div>
-        <div class="failure-message3-id hide">아이디는 2~10글자이어야 합니다</div>
-
-        <fieldset>
-           <input type="text" id="userName" placeholder="별명" name="UserName">
-        </fieldset>
-
-        <div class="success-message-name hide">사용할 수 있는 별명입니다</div>
-        <div class="failure-message-name hide">별명은 2~10글자이어야 합니다</div>
-        <div class="failure-message2-name hide">한글과 영어 숫자의 조합만 가능합니다</div>
-
-        <fieldset>
-            <input type="text" id="userEmail" placeholder="이메일" name="UserEmail">
-        </fieldset>
-
-        <div class="success-message-email hide">사용할 수 있는 이메일입니다</div>
-        <div class="failure-message-email hide">이메일 유형이 올바르지 않습니다</div>
-
-        <fieldset>
-            <input type="password" id="userpassword" placeholder="패스워드" name="UserPassword">
-        </fieldset>
-
-        <div class="success-message-password hide">사용할 수 있는 패스워드입니다</div>
-        <div class="failure-message-password hide">패스워드는 8~16자리 알파벳과 숫자, 특수문자가 포함되어야 합니다</div>
-
-        <fieldset>
-            <input type="password" id="userpasswordcheck" placeholder="패스워드 확인" name="UserPassword">
-        </fieldset>
-
-        <div class="success-message-passwordcheck hide">패스워드가 일치합니다.</div>
-        <div class="failure-message-passwordcheck hide">패스워드가 일치하지 않습니다.</div>
-
-
-        <button type="submit" id="subm">회원가입</button>password
+        <input type="text" id="userid" placeholder="아이디" name="UserId">
+        <input type="text" id="username" placeholder="별명" name="UserName">
+        <input type="text" id="useremail" placeholder="이메일" name="UserEmail">
+        <input type="password" id="userpw" placeholder="패스워드" name="UserPassword">
+        <button type="submit" id="subm">회원가입</button>
     </form>
 </div>
 </body>
 </html>
 
 <script>
-    let InputUserId = document.querySelector('#userId');
-    let IdSuccessMessage = document.querySelector('.success-message-id');
-    let IdFailureMessage = document.querySelector('.failure-message-id');
-    let IdFailureMessage2 = document.querySelector('.failure-message2-id');
-    let IdFailureMessage3 = document.querySelector('.failure-message3-id');
+    const btn = document.querySelector('button')
 
-    let InputUserName = document.querySelector('#userName');
-    let NameSuccessMessage = document.querySelector('.success-message-name');
-    let NameFailureMessage = document.querySelector('.failure-message-name');
-    let NameFailureMessage2 = document.querySelector('.failure-message2-name');
+    btn.addEventListener('click', (e) => {
+        e.preventDefault()
+        const userId = document.querySelector('#userid')
+        const userName = document.querySelector('#username')
+        const userEmail = document.querySelector('#useremail')
+        const userPassword = document.querySelector('#userpw')
 
-    let InputUserEmail = document.querySelector('#userEmail');
-    let EmailSuccessMessage = document.querySelector('.success-message-email');
-    let EmailFailureMessage = document.querySelector('.failure-message-email');
+        fetch('/RegisterRequest', {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userId: userid.value,
+                userName: username.value,
+                userEmail: useremail.value,
+                userPassword: userpw.value
+            })
+        }).then(response => response.json())
+          .then(data => {
+            if(data=="1"){
+                alert("회원가입에 성공하였습니다.");
+                location.replace="LoginPage";
+            }else if(data=="failRegist"){
+                alert("회원가입에 실패했습니다.")
+            }else{
+                alert("해당 아이디로 이미 가입한 회원입니다.")
+            }
 
-    let InputUserPassword = document.querySelector('#userpassword');
-    let PasswordSuccessMessage = document.querySelector('.success-message-password');
-    let PasswordFailureMessage = document.querySelector('.failure-message-password');
-
-    let InputUserPasswordcheck = document.querySelector('#userpasswordcheck');
-    let PasswordcheckSuccessMessage = document.querySelector('.success-message-passwordcheck');
-    let PasswordcheckFailureMessage = document.querySelector('.failure-message-passwordcheck');
-
-    function idLengthCheck(value){
-        return value.length >= 2 && value.length <= 10
-    }
-
-    function idavailability(str){
-        return /^[A-Za-z0-9][A-Za-z0-9]*$/.test(str);
-    }
-
-    function Passwordavailability (str) {
-        return /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}/.test(str);
-    }
-
-    InputUserId.onkeyup = function () {
-      // 값을 입력한 경우
-      if (InputUserId.value.length !== 0) {
-        if(idavailability(InputUserId.value) === false) {
-          IdSuccessMessage.classList.add('hide');
-          IdFailureMessage.classList.add('hide');
-          IdFailureMessage2.classList.remove('hide'); // 영어 또는 숫자만 가능합니다
-          IdFailureMessage3.classList.add('hide');
-        }else if(idLengthCheck(InputUserId.value) === false) {
-          IdSuccessMessage.classList.add('hide');
-          IdFailureMessage.classList.add('hide');
-          IdFailureMessage2.classList.add('hide');
-          IdFailureMessage3.classList.remove('hide'); // 아이디는 4~12글자이어야 합니다
-        }else if(idLengthCheck(InputUserId.value) && idavailability(InputUserId.value)) {
-          IdSuccessMessage.classList.remove('hide');
-          IdFailureMessage.classList.add('hide');
-          IdFailureMessage2.classList.add('hide');
-          IdFailureMessage3.classList.add('hide');
-        }
-      }else {
-        IdSuccessMessage.classList.add('hide');
-        IdFailureMessage.classList.add('hide');
-        IdFailureMessage2.classList.add('hide');
-        IdFailureMessage3.classList.add('hide');
-      }
-    }
+        })
+    })
 </script>

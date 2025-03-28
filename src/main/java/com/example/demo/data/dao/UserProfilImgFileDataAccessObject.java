@@ -35,7 +35,7 @@ public class UserProfilImgFileDataAccessObject {
 //        String fileURL = "C:/Beginner-spring/restarts/src/main/resources/ProfilImg/";
 
 //        PC 경로
-        String fileURL = "C:/Users/KHB/IdeaProjects/restarts/src/main/resources/ProfilImg/";
+        String fileURL = "C:/Users/KHB/IdeaProjects/restarts/src/main/resources/static/ProfilImg/";
         File savefiles;
         String savefileName;
         do {
