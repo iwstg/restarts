@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>MYPOPOL</title>
+    <title>회원정보 변경 페이지</title>
 
     <style>
         *{
@@ -66,15 +65,16 @@
 </head>
 <body>
 <div id="mains" class="Register-wrapper">
-    <h2>Regist</h2>
-    <form id="Register-form" th:action="@{/RegisterRequest}" th:object="${regiform}" method="post">
-        <input type="text" th:field="*{UserId}" placeholder="아이디">
-        <input type="text" th:field="*{UserName}" placeholder="별명">
-        <input type="text" th:field="*{UserEmail}" placeholder="이메일">
-        <input type="password" th:field="*{UserPassword}" placeholder="패스워드">
+    <h2>회원 정보 변경</h2>
+    <form id="Register-form" th:action="@{/ChangeUserInfoData}" th:object="${userchange}" method="post">
+        <input type="text" th:field="*{userName}" th:placeholder="${userinfo.userName}" th:value="${userinfo.userName}">
+        <input type="text" th:field="*{userEmail}" th:placeholder="${userinfo.userEmail}" th:value="${userinfo.userEmail}">
+        <input type="text" th:field="*{userIntroduce}" placeholder="자기소개를 입력해주세요" th:value="${userinfo.userIntroduce}">
+        <input type="password" th:field="*{userPassword}" placeholder="패스워드">
 
-        <button type="submit">회원가입</button>
+        <button type="submit">변경</button>
     </form>
 </div>
+
 </body>
 </html>

@@ -1,10 +1,7 @@
 package com.example.demo.data.dao;
 
 import com.example.demo.Configuration.Sha256Encode;
-import com.example.demo.data.dto.LoginPageDTO;
-import com.example.demo.data.dto.RegisterPageDTO;
-import com.example.demo.data.dto.UserInfoDTO;
-import com.example.demo.data.dto.UserProfilDTO;
+import com.example.demo.data.dto.*;
 import com.example.demo.data.entity.userEntity;
 import com.example.demo.data.entity.userProfilFileEntity;
 import com.example.demo.data.repository.userProfilFileRepository;
@@ -23,6 +20,8 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+
+import static java.time.LocalTime.now;
 
 @Service
 @Transactional
@@ -84,10 +83,17 @@ public class UserDataAccessObject {
         return new UserProfilDTO(ent.getUserID(), ent.getUserName(), ent.getUserEmail(), ent.getUserIntroduce(), ent.getUserProfilImg());
     }
 
+    public UserProfilChangeDTO ReturnUserProfilALLInfo(String userID){
+        userEntity ent = userRepo.getReferenceById(userID);
+        return new UserProfilChangeDTO(ent.getUserPassword(),ent.getUserName(), ent.getUserEmail(), ent.getUserIntroduce(), ent.getUserProfilImg());
+    }
     /**
+     * [2025-04-09] 사용자 정보 한개한개의 수정기능은 사용하지않음.
+     *
      *  [2025-02-11] 사용자 프로필 정보 수정
      *  닉네임 변경, 비밀번호 변경, 이메일 변경, 프로필 사진 변경, 자기소개 변경 기능 필요
-     */
+     *
+
     @Transactional
     public void ChangeUserInDBName(String SessionId, String name) {
 
@@ -103,7 +109,7 @@ public class UserDataAccessObject {
                             userinfoent.getUserIntroduce(), userinfoent.getUserProfilImg(),
                             userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
         userRepo.save(ent);
-         */
+
     }
 
 
@@ -129,15 +135,7 @@ public class UserDataAccessObject {
         userRepo.save(ent);
     }
 
-    @Transactional
-    public void ChangeUserInDBProfilImg(String SessionId, String savefilename) {
-        userEntity userinfoent = userRepo.getReferenceById(SessionId);
-        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
-                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
-                userinfoent.getUserIntroduce(), savefilename,
-                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
-        userRepo.save(ent);
-    }
+
 
     @Transactional
     public void ChangeUserInDBIntroduce(String SessionId, String introduce) {
@@ -148,6 +146,27 @@ public class UserDataAccessObject {
                 userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
         userRepo.save(ent);
     }
+
+    */
+
+    @Transactional
+    public void ChangeUserProfilData(String SessionID, UserProfilChangeDTO data){
+        userEntity ent = userRepo.getReferenceById(SessionID);
+        userEntity changeent = new userEntity(ent.getUserID(), data.getUserName(), data.getUserEmail(),
+                data.getUserPassword(), data.getUserIntroduce(), ent.getUserProfilImg(), ent.getUserRegistDate(), LocalDateTime.now());
+        userRepo.save(changeent);
+    }
+
+    @Transactional
+    public void ChangeUserInDBProfilImg(String SessionId, String savefilename) {
+        userEntity userinfoent = userRepo.getReferenceById(SessionId);
+        userEntity ent = new userEntity(userinfoent.getUserID(), userinfoent.getUserName(),
+                userinfoent.getUserEmail(), userinfoent.getUserPassword(),
+                userinfoent.getUserIntroduce(), savefilename,
+                userinfoent.getUserRegistDate(), userinfoent.getUserRecentConnectionDate());
+        userRepo.save(ent);
+    }
+
 
     @Transactional
     public void ChangeUserRecentConnectionTimeInDB(String SessionId) {

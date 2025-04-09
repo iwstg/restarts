@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.data.dao.UserDataAccessObject;
-import com.example.demo.data.dto.LoginPageDTO;
-import com.example.demo.data.dto.RegisterPageDTO;
-import com.example.demo.data.dto.UserInfoDTO;
-import com.example.demo.data.dto.UserProfilDTO;
+import com.example.demo.data.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -66,17 +63,19 @@ public class userControlService {
     /**
      * [2025-02-04] 사용자 프로필 정보 요청시 DTO 객체로 반환
      */
-    public UserProfilDTO ReturnUserProfilInfoUseID(String userID){
+    public UserProfilChangeDTO ReturnUserAllProfilInfoUseID(String userID){
         if(userDAO.checkUserId(userID)){
-            return userDAO.ReturnUserALLInfo(userID);
+            return userDAO.ReturnUserProfilALLInfo(userID);
         }else{
             return null;
         }
     }
     /**
+     *  [2025-04-09] 시용자 정보 한개한개의 수정기능은 사용하지않음.
+     *
      *  [2025-02-11] 사용자 프로필 정보 수정
      *  닉네임 변경, 비밀번호 변경, 이메일 변경, 프로필 사진 변경, 자기소개 변경 기능 필요
-     */
+     *
     public void ChangeUserNameTo(String SessionId, String name) {
         userDAO.ChangeUserInDBName(SessionId, name);
     }
@@ -93,6 +92,11 @@ public class userControlService {
         userDAO.ChangeUserInDBIntroduce(SessionId, introduce);
     }
 
+    */
+
+    public void ChangeUserProfilInfo(String userID, UserProfilChangeDTO form) {
+        userDAO.ChangeUserProfilData(userID, form);
+    }
 
     public void DeleteUser(String sessionId) {
         userDAO.DeleteUserInDB(sessionId);
@@ -110,5 +114,6 @@ public class userControlService {
     public boolean CheckDuplEmail(String userEmail) {
         return userDAO.EmailDuplicheck(userEmail);
     }
+
 
 }

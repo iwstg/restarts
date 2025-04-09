@@ -1,18 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>로그인했습니다요</title>
 </head>
 <body>
 <h2> 대충 이런느낌으로 .. </h2>
-게시판에 대한 디자인 부트스트랩을 사용하든 해서 맞는 모양을 내야함.<br>
 
-현재 로그인 한 상태 정보, 수정, 로그아웃<br>
+<span th:text="${userinfo.userID}">유저 아이디</span> <br>
+<span th:text="${userinfo.userName}">유저 이름</span> <br>
+<span th:text="${userinfo.userEmail}">유져 이메일</span> <br>
+<span th:text="${userinfo.userIntroduce}">유저 자기소개</span> <br>
+<br>
 
-메인 페이지에 보여줄 내용 등..<br>
+
 <form id="Logout-form" action="MainPageLogOut" method="post">
 <button type="submit">로그아웃</button>
 </form>
+
+<a th:href="@{/ChangeUserInfoAccess}">회원 정보 수정</a>
 </body>
 </html>

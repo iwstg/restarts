@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.Configuration.Sha256Encode;
 import com.example.demo.data.dto.*;
 import com.example.demo.service.userBoardService;
 import com.example.demo.service.userProfilImgService;
@@ -53,26 +54,27 @@ public class StartController {
             model.addAttribute("userinfo", userinfo);
             return "MainPage";
         }
+        model.addAttribute("loginform", new LoginPageDTO());
         return "LoginPage";
     }
 
     /**
      * [2025-02-04] 메인페이지 접근 시 Session 정보의 ID로 값을 불러와 해당 계정의 게시글 및 사용자 정보를 불러옴
      */
-    @GetMapping("/MainPage")
+    @GetMapping("MainPage")
     public String MainPageCallResource(@SessionAttribute(name="userId", required = false)String userID, Model model){
 
-        UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
+        UserProfilDTO userProfilinfo = userService.ReturnUserALLInfoUseID(userID);
 
         //회원 정보내용
-        model.addAttribute("userProfil", userProfilinfo);
+
 
 
         //게시글 내용
 
 
-
-        return "메인페이지 정보 전달완료";
+        model.addAttribute("userinfo", userProfilinfo);
+        return "MainPage";
     }
 
 
@@ -80,9 +82,10 @@ public class StartController {
     /**
      * [2025-01-14] 로그인페이지에서 회원가입페이지로 리다이랙션 해주는 곳
      */
-    @GetMapping("RegisterPage")
-    public String goToRegistPage() {
+    @GetMapping("/goRegisterPage")
+    public String goToRegistPage(Model model) {
         System.out.println("회원가입 페이지로 ( RegistPage -> Registpage ) ");
+        model.addAttribute("regiform", new RegisterPageDTO());
         return "RegisterPage";
     }
 
@@ -91,7 +94,7 @@ public class StartController {
      * [2025-01-31] 로그인페이지에서 입력받은 내용과 일치하는 정보가 DB에 존재할경우 로그인 진행
      */
     @PostMapping("LoginTry")
-    public String runLoginRequest(@RequestBody LoginPageDTO form, HttpServletRequest req){
+    public String runLoginRequest(@ModelAttribute("loginform") LoginPageDTO form, HttpServletRequest req, Model model){
         if(userService.userTryToLogin(form)) {
             //로그인 성공 시
 
@@ -100,6 +103,8 @@ public class StartController {
             session.setMaxInactiveInterval(3600);
             System.out.println("[Controller] 세션 : " + session.getAttribute("userId"));
             userService.ChangeUserRecentConnectionTime(form.getUserLoginId());
+            UserProfilDTO userinfo = userService.ReturnUserALLInfoUseID(form.getUserLoginId());
+            model.addAttribute("userinfo", userinfo);
             return "MainPage";
         }else
             return "LoginPage";
@@ -107,12 +112,13 @@ public class StartController {
 
 
     @PostMapping("MainPageLogOut")
-    public String TryToLogOut(HttpServletRequest req){
+    public String TryToLogOut(HttpServletRequest req, Model model){
         HttpSession session = req.getSession(false);
         String sessionID = (String)session.getAttribute("userId");
         userService.ChangeUserRecentConnectionTime(sessionID);
         session.invalidate();
         System.out.println("[Controller] 세션 박살! 로그인페이지로!");
+        model.addAttribute("loginform", new LoginPageDTO());
         return "LoginPage";
     }
 
@@ -125,7 +131,7 @@ public class StartController {
      */
 
     @PostMapping("RegisterRequest")
-    public String runRegisterRequest(@RequestBody RegisterPageDTO form) {
+    public String runRegisterRequest(@ModelAttribute("regiform") RegisterPageDTO form, Model model) {
         System.out.println(form.toString());
         System.out.println(form);
         // Form 에서 받아온 회원 정보가 요구사항에 맞는지 확인
@@ -138,9 +144,11 @@ public class StartController {
             userService.userRegistService(form);
             System.out.println("[Controller] form 데이터 전송 ( Controller -> Service");
             // 들어온 데이터가 정상이고 처리도 정상으로 됐으면 안내페이지로
+            model.addAttribute("loginform", new LoginPageDTO());
             return "LoginPage";
         } else {
             System.out.println("조건에 맞지않습니다.");
+            model.addAttribute("loginform", new LoginPageDTO());
             return "LoginPage";
         }
     }
@@ -151,12 +159,33 @@ public class StartController {
      */
 
     // 유저정보 수정 페이지 접근
-    @GetMapping("ChangeUserInfo")
+    @GetMapping("ChangeUserInfoAccess")
     public String changeuserinfopage(@SessionAttribute(name="userId", required = false)String userID, Model model){
-        UserProfilDTO userProfilinfo = userService.ReturnUserProfilInfoUseID(userID);
-        model.addAttribute("userInfo", userProfilinfo);
-        return "유저정보 수정 페이지입니다.";
+        UserProfilDTO userProfilinfo = userService.ReturnUserALLInfoUseID(userID);
+        model.addAttribute("userChange", new LoginPageDTO());
+        return "UserInfoChangeAccessPage";
     }
+
+    @PostMapping("ChangeUserInfoAccessCheck")
+    public String changeuserinfoaccesscheck(@SessionAttribute(name="userId", required = false)String userID,
+                                            @ModelAttribute("userChange") LoginPageDTO form,
+                                                Model model){
+        if(userID.equals(form.getUserLoginId()) && userService.userTryToLogin(form)){
+            UserProfilDTO userinfo = userService.ReturnUserALLInfoUseID(userID);
+            model.addAttribute("userinfo", userinfo);
+            model.addAttribute("userchange", new UserProfilChangeDTO());
+            return "UserInfoChangePage";
+        }else {
+            UserProfilDTO userinfo = userService.ReturnUserALLInfoUseID(userID);
+            model.addAttribute("userinfo", userinfo);
+            return "MainPage";
+        }
+    }
+
+    /**
+     * [2025-04-09] 해당 기능은 개별 데이터 접근으로 25-04-09 이후로 사용하지 않음.
+     *  > UserProfilChangeDTO를 사용하여 변경된 값만 저장하는 방식으로 진행함.
+     *
 
     @PostMapping("ChangeUserName")
     public String changeuserNameinDB(@RequestBody HashMap<String, String> maps,HttpServletRequest req){
@@ -186,6 +215,45 @@ public class StartController {
         String sessionId = req.getSession().getAttribute("userId").toString();
         userService.ChangeUserIntroduceTo(sessionId, maps.get("introduce"));
         return "testpage";
+    }
+
+     */
+
+
+    @PostMapping("ChangeUserInfoData")
+    public String CheckChangeUserInfo(@SessionAttribute(name="userId", required = false)String userID,
+                                      @ModelAttribute("userchange")UserProfilChangeDTO form,
+                                      Model model) {
+        UserProfilChangeDTO userinfo = userService.ReturnUserAllProfilInfoUseID(userID);
+
+        String[] change = {userinfo.getUserName(), userinfo.getUserEmail(), userinfo.getUserIntroduce(), userinfo.getUserPassword()}; // name, eamil, introduce, pwd, img
+        System.out.println("유저정보 변경 들어온 값" + form.toString());
+        if(!userinfo.getUserName().equals(form.getUserName()) &&
+                form.getUserName() != null &&
+                Pattern.matches("^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", form.getUserName()))
+            change[0] = form.getUserName();
+        if(!userinfo.getUserEmail().equals(form.getUserEmail()) &&
+                form.getUserEmail() != null &&
+                !userService.CheckDuplEmail(form.getUserEmail()) &&
+                !form.getUserEmail().equals("") &&
+                Pattern.matches("^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", form.getUserEmail()))
+            change[1] = form.getUserEmail();
+        if(!userinfo.getUserIntroduce().equals(form.getUserIntroduce())) {
+            if(!form.getUserIntroduce().equals(""))
+                change[2] = form.getUserIntroduce();
+        }
+        if(!userinfo.getUserPassword().equals(Sha256Encode.encrypt(form.getUserPassword())) &&
+                form.getUserPassword() != null &&
+                Pattern.matches("(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", form.getUserPassword()))
+            change[3] = Sha256Encode.encrypt(form.getUserPassword());
+
+        UserProfilChangeDTO changeDTO = new UserProfilChangeDTO(change[3], change[0], change[1],
+                change[2], userinfo.getUserProfilImg());
+
+            userService.ChangeUserProfilInfo(userID, changeDTO);
+            UserProfilDTO userprofilinfo = userService.ReturnUserALLInfoUseID(userID);
+            model.addAttribute("userinfo", userprofilinfo);
+            return "MainPage";
     }
 
     @PostMapping("DeleteUser")

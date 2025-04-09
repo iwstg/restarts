@@ -64,12 +64,12 @@
 </head>
 <body>
 <div id="mains" class="login-wrapper">
-  <h2>Login</h2>
-  <form id="login-form" th:action="@{/LoginTry}" th:object="${loginform}" method="post">
+  <h2>회원 정보 확인</h2>
+  <form id="login-form" th:action="@{/ChangeUserInfoAccessCheck}" th:object="${userChange}" method="post">
     <input type="text" th:field="*{UserLoginId}" placeholder="아이디">
     <input type="password" th:field="*{UserLoginPassword}" placeholder="패스워드">
-    <button type="submit" value="로그인">로그인</button>
-    <a th:href="@{/goRegisterPage}">회원가입</a>
+    <button type="submit" value="확인">확인</button>
+    <a th:href="@{/MainPage}">뒤로</a>
   </form>
 </div>
 </body>
