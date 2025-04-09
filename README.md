@@ -1,10 +1,11 @@
 <div align="center">
 
   
-  ## Spring Boot Api 공부 [25-03-09]
+  ## Spring Boot Api 공부 [25-04-09]
 <hr>
 
 ### ~ 개발된 기능들 ~<br>
+API 개발 이후 프론트 부분 구현중<br>
 Mysql DB연동<br>
 로그인 및 회원가입 기능<br>
 회원 정보 수정기능<br>
